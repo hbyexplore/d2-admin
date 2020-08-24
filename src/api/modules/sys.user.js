@@ -27,5 +27,15 @@ export default ({ service, request, serviceForMock, requestForMock, mock, faker,
       method: 'post',
       data
     })
+  },
+  SYS_GET_TOKEN(data={}){
+    data.grant_type="password";
+    data.client_id="client-user";
+    data.client_secret="123456";
+    return request({
+      url: '/auth/oauth/token',
+      method: 'post',
+      data
+    })
   }
 })

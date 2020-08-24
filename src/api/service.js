@@ -3,7 +3,7 @@ import Adapter from 'axios-mock-adapter'
 import { get } from 'lodash'
 import util from '@/libs/util'
 import { errorLog, errorCreate } from './tools'
-
+import { getToken, removeToken } from '@/utils/auth';
 /**
  * @description 创建请求实例
  */
@@ -12,13 +12,28 @@ function createService () {
   const service = axios.create()
   // 请求拦截
   service.interceptors.request.use(
-    config => config,
+/*    config => config,
     error => {
       // 发送失败
       console.log(error)
       return Promise.reject(error)
+    }*/
+    config => {
+      var token = getToken();
+      console.log(token+"====token");
+      if (token && config.url != './auth/oauth/token') {
+        // config.headers['Auth'] = getToken() // 让每个请求携带自定义token 请根据实际情况自行修改
+        // config.headers['Authorization'] = 'Bearer ' + getToken()
+        config.headers['Authorization'] = 'Bearer ' + getToken()
+      }
+      return config
+    }, error => {
+      // Do something with request error
+      console.log(error) // for debug
+      Promise.reject(error)
     }
   )
+
   // 响应拦截
   service.interceptors.response.use(
     response => {
